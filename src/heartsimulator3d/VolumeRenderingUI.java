@@ -95,8 +95,6 @@ public class VolumeRenderingUI extends javax.swing.JFrame
         camera.SetFocalPoint(50, 50, 50);
         camera.SetPosition(cameraPosition);
         camera.SetViewUp(-1, 0, 0);
-
-        //pnlRender.Render();
     }
 
     private void readVtkFile() throws FileNotFoundException, Exception
@@ -135,7 +133,7 @@ public class VolumeRenderingUI extends javax.swing.JFrame
         pnlStatus = new javax.swing.JPanel();
         lblPosition = new javax.swing.JLabel();
         pnlRender = new vtk.vtkPanel();
-        jToolBar1 = new javax.swing.JToolBar();
+        toolbar = new javax.swing.JToolBar();
         btnReset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -164,7 +162,7 @@ public class VolumeRenderingUI extends javax.swing.JFrame
             }
         });
 
-        jToolBar1.setRollover(true);
+        toolbar.setRollover(true);
 
         btnReset.setText("Reset view");
         btnReset.setFocusable(false);
@@ -175,20 +173,20 @@ public class VolumeRenderingUI extends javax.swing.JFrame
                 btnResetActionPerformed(evt);
             }
         });
-        jToolBar1.add(btnReset);
+        toolbar.add(btnReset);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
             .addComponent(pnlRender, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pnlRender, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                 .addGap(1, 1, 1)
@@ -207,6 +205,7 @@ public class VolumeRenderingUI extends javax.swing.JFrame
     {//GEN-HEADEREND:event_btnResetActionPerformed
         camera.SetPosition(cameraPosition);
         camera.SetViewUp(-1, 0, 0);
+        pnlRender.UpdateLight();
         pnlRender.Render();
         showPosition();
     }//GEN-LAST:event_btnResetActionPerformed
@@ -226,9 +225,9 @@ public class VolumeRenderingUI extends javax.swing.JFrame
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
-    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lblPosition;
     private vtk.vtkPanel pnlRender;
     private javax.swing.JPanel pnlStatus;
+    private javax.swing.JToolBar toolbar;
     // End of variables declaration//GEN-END:variables
 }
