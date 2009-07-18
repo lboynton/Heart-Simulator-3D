@@ -28,7 +28,7 @@ import vtk.vtkStructuredPointsReader;
  *
  * @author Lee Boynton
  */
-public class MainUI extends javax.swing.JFrame
+public class VolumeRenderingUI extends javax.swing.JFrame
 {
     private final String file = "HeartImage.vtk";
     private final double cameraPosition[] = {-10, -12, -164};
@@ -36,7 +36,7 @@ public class MainUI extends javax.swing.JFrame
     private vtkCamera camera;
 
     /** Creates new form MainUI */
-    public MainUI()
+    public VolumeRenderingUI()
     {
         try
         {
@@ -139,6 +139,7 @@ public class MainUI extends javax.swing.JFrame
         btnReset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Heart Volume Rendering");
 
         pnlStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -219,7 +220,7 @@ public class MainUI extends javax.swing.JFrame
         {
             public void run()
             {
-                new MainUI().setVisible(true);
+                new VolumeRenderingUI().setVisible(true);
             }
         });
     }
