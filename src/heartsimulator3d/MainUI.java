@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import vtk.vtkActor;
 import vtk.vtkAlgorithmOutput;
 import vtk.vtkAxesActor;
@@ -30,12 +31,22 @@ import vtk.vtkStructuredPointsReader;
 public class MainUI extends javax.swing.JFrame
 {
     private final String file = "HeartImage.vtk";
+    private final double cameraPosition[] = {-10, -12, -164};
     private vtkAlgorithmOutput output;
     private vtkCamera camera;
 
     /** Creates new form MainUI */
     public MainUI()
     {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception ex)
+        {
+            System.err.println("Unable to use system look and feel");
+        }
+        
         initComponents();
         setLocationRelativeTo(null);
         
@@ -82,7 +93,7 @@ public class MainUI extends javax.swing.JFrame
 
         camera = pnlRender.GetRenderer().GetActiveCamera();
         camera.SetFocalPoint(50, 50, 50);
-        camera.SetPosition(-10, -12, -164);
+        camera.SetPosition(cameraPosition);
         camera.SetViewUp(-1, 0, 0);
 
         //pnlRender.Render();
@@ -124,6 +135,8 @@ public class MainUI extends javax.swing.JFrame
         pnlStatus = new javax.swing.JPanel();
         lblPosition = new javax.swing.JLabel();
         pnlRender = new vtk.vtkPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+        btnReset = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -150,17 +163,33 @@ public class MainUI extends javax.swing.JFrame
             }
         });
 
+        jToolBar1.setRollover(true);
+
+        btnReset.setText("Reset view");
+        btnReset.setFocusable(false);
+        btnReset.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReset.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnReset);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
             .addComponent(pnlRender, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(pnlRender, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pnlRender, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
                 .addGap(1, 1, 1)
                 .addComponent(pnlStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -172,6 +201,14 @@ public class MainUI extends javax.swing.JFrame
     {//GEN-HEADEREND:event_pnlRenderMouseDragged
         showPosition();
     }//GEN-LAST:event_pnlRenderMouseDragged
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnResetActionPerformed
+    {//GEN-HEADEREND:event_btnResetActionPerformed
+        camera.SetPosition(cameraPosition);
+        camera.SetViewUp(-1, 0, 0);
+        pnlRender.Render();
+        showPosition();
+    }//GEN-LAST:event_btnResetActionPerformed
 
     /**
      * @param args the command line arguments
@@ -187,6 +224,8 @@ public class MainUI extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnReset;
+    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lblPosition;
     private vtk.vtkPanel pnlRender;
     private javax.swing.JPanel pnlStatus;
