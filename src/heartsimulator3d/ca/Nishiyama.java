@@ -4,7 +4,6 @@
  */
 package heartsimulator3d.ca;
 
-import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -27,7 +26,6 @@ public class Nishiyama
     private int N = 5; //
     private int delta1 = 3; // first delta value
     private int delta2 = 7; // second delta value
-    private static final int time = 50; // duration to run simulation
     private int u[][][] = new int[xSize][ySize][zSize]; // voltage values for each cell
     private int v[][][] = new int[xSize][ySize][zSize]; // recovery values for each cell
     private int delta[][][] = new int[xSize][ySize][zSize]; // delta values for each cell
