@@ -71,12 +71,11 @@ public class GeometryToVtk
             {
                 for (int z = 0; z < geometry[x][y].length; z++)
                 {
-                    if (geometry[x][y][z] == 4)
-                    {
-                        int tuple = x + (y * 100) + (z * 10000);
+                    double opacity = ((double) geometry[x][y][z]) / 4;
 
-                        array.SetTuple1(tuple, 1);
-                    }
+                    int tuple = x + (y * 100) + (z * 10000);
+
+                    array.SetTuple1(tuple, opacity);
                 }
             }
         }
