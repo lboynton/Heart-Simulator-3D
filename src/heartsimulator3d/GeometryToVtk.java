@@ -22,7 +22,7 @@ public class GeometryToVtk
         image.SetDimensions(100, 100, 100);
         image.AllocateScalars();
         vtkDataArray array = image.GetPointData().GetScalars();
-        
+
         try
         {
             FileInputStream fstream = new FileInputStream("./heart_lattice_3d");
@@ -53,6 +53,41 @@ public class GeometryToVtk
 
         vtkStructuredPointsWriter writer = new vtkStructuredPointsWriter();
         writer.SetFileName("HeartImage.vtk");
+        writer.SetInput(image);
+        writer.Write();
+    }
+
+    public vtkImageData getImageData(int[][][] geometry)
+    {
+        vtkPanel panel = new vtkPanel();
+        vtkImageData image = new vtkImageData();
+        image.SetDimensions(100, 100, 100);
+        image.AllocateScalars();
+        vtkDataArray array = image.GetPointData().GetScalars();
+
+        for (int x = 0; x < geometry.length; x++)
+        {
+            for (int y = 0; y < geometry[x].length; y++)
+            {
+                for (int z = 0; z < geometry[x][y].length; z++)
+                {
+                    if (geometry[x][y][z] == 4)
+                    {
+                        int tuple = x + (y * 100) + (z * 10000);
+
+                        array.SetTuple1(tuple, 1);
+                    }
+                }
+            }
+        }
+
+        return image;
+    }
+
+    public void writeVtkFile(vtkImageData image, String filename)
+    {
+        vtkStructuredPointsWriter writer = new vtkStructuredPointsWriter();
+        writer.SetFileName(filename);
         writer.SetInput(image);
         writer.Write();
     }
