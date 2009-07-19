@@ -52,7 +52,7 @@ public class Nishiyama
         this.delta2 = delta2;
     }
 
-    private void readCellsFile() throws FileNotFoundException, IOException
+    public void readCellsFile() throws FileNotFoundException, IOException
     {
         FileInputStream fstream = new FileInputStream("./heart_lattice_3d");
         DataInputStream in = new DataInputStream(fstream);
@@ -114,7 +114,7 @@ public class Nishiyama
             }
         }
 
-        u[11][42][40] = 1;
+        u[11][42][56] = 1;
 
         try
         {
