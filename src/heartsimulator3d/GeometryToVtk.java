@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Random;
 import vtk.vtkDataArray;
 import vtk.vtkImageData;
 import vtk.vtkPanel;
@@ -23,8 +22,6 @@ public class GeometryToVtk
         image.SetDimensions(100, 100, 100);
         image.AllocateScalars();
         vtkDataArray array = image.GetPointData().GetScalars();
-
-        Random random = new Random();
         
         try
         {
@@ -44,7 +41,7 @@ public class GeometryToVtk
 
                 int tuple = x + (y * 100) + (z * 10000);
 
-                array.SetTuple1(tuple, (double)(random.nextInt(2)+1) / 2);
+                array.SetTuple1(tuple, 1);
             }
 
             in.close();
