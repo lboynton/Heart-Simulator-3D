@@ -10,19 +10,22 @@
  */
 package heartsimulator3d;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import vtk.vtkActor;
 import vtk.vtkAlgorithmOutput;
 import vtk.vtkAxesActor;
 import vtk.vtkCamera;
-import vtk.vtkContourFilter;
-import vtk.vtkPolyDataMapper;
-import vtk.vtkPolyDataNormals;
+import vtk.vtkColorTransferFunction;
+import vtk.vtkPiecewiseFunction;
+import vtk.vtkRenderWindow;
 import vtk.vtkStructuredPointsReader;
+import vtk.vtkVolume;
+import vtk.vtkVolumeProperty;
+import vtk.vtkVolumeTextureMapper2D;
 
 /**
  *
@@ -31,7 +34,10 @@ import vtk.vtkStructuredPointsReader;
 public class VolumeRenderingUI extends javax.swing.JFrame
 {
     private final String file = "HeartImage.vtk";
-    private final double cameraPosition[] = {-10, -12, -164};
+    private final double cameraPosition[] =
+    {
+        -10, -12, -164
+    };
     private vtkAlgorithmOutput output;
     private vtkCamera camera;
 
@@ -46,15 +52,15 @@ public class VolumeRenderingUI extends javax.swing.JFrame
         {
             System.err.println("Unable to use system look and feel");
         }
-        
+
         initComponents();
         setLocationRelativeTo(null);
-        
+
         try
         {
             readVtkFile();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -65,36 +71,55 @@ public class VolumeRenderingUI extends javax.swing.JFrame
 
     private void setup3DRender()
     {
-        // Add in some surface geometry for interest.
-        vtkContourFilter iso = new vtkContourFilter();
-        iso.SetInputConnection(output);
-        iso.SetValue(0, .22);
-        vtkPolyDataNormals normals = new vtkPolyDataNormals();
-        normals.SetInputConnection(iso.GetOutputPort());
-        normals.SetFeatureAngle(45);
-        vtkPolyDataMapper isoMapper = new vtkPolyDataMapper();
-        isoMapper.SetInputConnection(normals.GetOutputPort());
-        isoMapper.ScalarVisibilityOff();
-        vtkActor isoActor = new vtkActor();
-        isoActor.SetMapper(isoMapper);
-        isoActor.GetProperty().SetDiffuseColor(Color.red.getRed(), Color.red.getGreen(), Color.red.getBlue());
-        isoActor.GetProperty().SetSpecularColor(Color.white.getRed(), Color.white.getGreen(), Color.white.getBlue());
-        isoActor.GetProperty().SetDiffuse(.8);
-        isoActor.GetProperty().SetSpecular(.5);
-        isoActor.GetProperty().SetSpecularPower(30);
+        // 2D texture mapping
+        // Create transfer mapping scalar value to opacity
+        vtkPiecewiseFunction opacityTransferFunction = new vtkPiecewiseFunction();
+        opacityTransferFunction.AddPoint(20, 0.0);
+        opacityTransferFunction.AddPoint(255, 1);
+
+        // Create transfer mapping scalar value to color
+        vtkColorTransferFunction colorTransferFunction = new vtkColorTransferFunction();
+        colorTransferFunction.AddRGBPoint(0.0, 0.0, 0.0, 0.0);
+        colorTransferFunction.AddRGBPoint(64.0, 1.0, 0.0, 0.0);
+        colorTransferFunction.AddRGBPoint(128.0, 0.0, 0.0, 1.0);
+        colorTransferFunction.AddRGBPoint(192.0, 0.0, 1.0, 0.0);
+        colorTransferFunction.AddRGBPoint(255.0, 0.0, 0.2, 0.0);
+
+        // The property describes how the data will look
+        vtkVolumeProperty volumeProperty = new vtkVolumeProperty();
+        volumeProperty.SetColor(colorTransferFunction);
+        volumeProperty.SetScalarOpacity(opacityTransferFunction);
+
+        vtkVolumeTextureMapper2D volumeMapper = new vtkVolumeTextureMapper2D();
+        volumeMapper.SetInputConnection(output);
+
+        vtkVolume volume = new vtkVolume();
+        volume.SetMapper(volumeMapper);
+        volume.SetProperty(volumeProperty);
+        pnlRender.GetRenderer().AddVolume(volume);
 
         // add in axes
         vtkAxesActor axes = new vtkAxesActor();
         axes.SetTotalLength(10, 10, 10);
         pnlRender.GetRenderer().AddActor(axes);
 
-        // Add actor in 3D Panel
-        pnlRender.GetRenderer().AddActor(isoActor);
-
         camera = pnlRender.GetRenderer().GetActiveCamera();
         camera.SetFocalPoint(50, 50, 50);
         camera.SetPosition(cameraPosition);
         camera.SetViewUp(-1, 0, 0);
+
+        pnlRender.Render();
+        pnlRender.addWindowSetObserver(new Observer()
+        {
+            public void update(Observable o, Object arg)
+            {
+                vtkRenderWindow renWin = (vtkRenderWindow) arg;
+                if (renWin.GetEventPending() != 0)
+                {
+                    renWin.SetAbortRender(1);
+                }
+            }
+        });
     }
 
     private void readVtkFile() throws FileNotFoundException, Exception
@@ -102,13 +127,13 @@ public class VolumeRenderingUI extends javax.swing.JFrame
         System.out.println("Reading VTK file: " + file);
 
         // check file exists
-        if(!new File(file).isFile())
+        if (!new File(file).isFile())
         {
             throw new FileNotFoundException("Could not read VTK file: " + file);
         }
         vtkStructuredPointsReader reader = new vtkStructuredPointsReader();
         reader.SetFileName(file);
-        if(reader.IsFileStructuredPoints() == 0)
+        if (reader.IsFileStructuredPoints() == 0)
         {
             throw new Exception("VTK file does not contain structured points data");
         }
