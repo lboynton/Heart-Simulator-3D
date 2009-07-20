@@ -79,11 +79,17 @@ public class VolumeRenderingUI extends javax.swing.JFrame
 
         // Create transfer mapping scalar value to color
         vtkColorTransferFunction colorTransferFunction = new vtkColorTransferFunction();
+
+        // use with different opacities
         colorTransferFunction.AddRGBPoint(0.0, 0.0, 0.0, 0.0);
         colorTransferFunction.AddRGBPoint(64.0, 1.0, 0.0, 0.0);
         colorTransferFunction.AddRGBPoint(128.0, 0.0, 0.0, 1.0);
         colorTransferFunction.AddRGBPoint(192.0, 0.0, 1.0, 0.0);
         colorTransferFunction.AddRGBPoint(255.0, 0.0, 0.2, 0.0);
+
+        // heart coloured
+        // use with data without different opacities
+        colorTransferFunction.AddRGBPoint(255.0, 111, 227, 214);
 
         // The property describes how the data will look
         vtkVolumeProperty volumeProperty = new vtkVolumeProperty();
